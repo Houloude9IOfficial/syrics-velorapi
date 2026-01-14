@@ -248,6 +248,16 @@ interface SpotifySearchResponse {
   };
 }
 
+interface SpotifyApiAdditionalTracksResponse {
+  items: SpotifyApiTrack[];
+  next: string | null;
+}
+
+interface SpotifyApiAdditionalPlaylistTracksResponse {
+  items: Array<{ track: SpotifyApiTrack | null }>;
+  next: string | null;
+}
+
 /**
  * Get the best quality image from Spotify images array
  */
@@ -380,17 +390,16 @@ export const fetchAlbum = async (id: string): Promise<SpotifyAlbum> => {
 
   // Fetch additional tracks if there are more than 50
   if (data.tracks.next) {
-    let nextUrl = data.tracks.next;
+    let nextUrl: string | null = data.tracks.next;
     while (nextUrl) {
-      const additionalTracks = await spotifyFetch<{
-        items: SpotifyApiTrack[];
-        next: string | null;
-      }>(nextUrl.replace(SPOTIFY_API_BASE, ''));
+      const additionalTracks: SpotifyApiAdditionalTracksResponse = await spotifyFetch<SpotifyApiAdditionalTracksResponse>(
+        nextUrl.replace(SPOTIFY_API_BASE, '')
+      );
 
       album.tracks.push(
-        ...additionalTracks.items.map((t) => transformTrack(t, album.image))
+        ...additionalTracks.items.map((t: SpotifyApiTrack) => transformTrack(t, album.image))
       );
-      nextUrl = additionalTracks.next || '';
+      nextUrl = additionalTracks.next;
     }
   }
 
@@ -406,19 +415,18 @@ export const fetchPlaylist = async (id: string): Promise<SpotifyPlaylist> => {
 
   // Fetch additional tracks if there are more than 100
   if (data.tracks.next) {
-    let nextUrl = data.tracks.next;
+    let nextUrl: string | null = data.tracks.next;
     while (nextUrl) {
-      const additionalTracks = await spotifyFetch<{
-        items: Array<{ track: SpotifyApiTrack | null }>;
-        next: string | null;
-      }>(nextUrl.replace(SPOTIFY_API_BASE, ''));
+      const additionalTracks: SpotifyApiAdditionalPlaylistTracksResponse = await spotifyFetch<SpotifyApiAdditionalPlaylistTracksResponse>(
+        nextUrl.replace(SPOTIFY_API_BASE, '')
+      );
 
       playlist.tracks.push(
         ...additionalTracks.items
-          .filter((item) => item.track !== null)
-          .map((item) => transformTrack(item.track!))
+          .filter((item: { track: SpotifyApiTrack | null }) => item.track !== null)
+          .map((item: { track: SpotifyApiTrack | null }) => transformTrack(item.track!))
       );
-      nextUrl = additionalTracks.next || '';
+      nextUrl = additionalTracks.next;
     }
   }
 

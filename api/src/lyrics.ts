@@ -11,6 +11,10 @@ import {
   LyricsResponseRaw,
 } from './types.js';
 
+// Constants
+const DEFAULT_LYRICS_API_BASE = 'https://syrics-api.vercel.app';
+const RATE_LIMIT_WAIT_TIME_SECONDS = 30;
+
 export class LyricsApiError extends Error {
   constructor(
     message: string,
@@ -33,16 +37,15 @@ export class LyricsApiError extends Error {
 export const fetchLyrics = async (
   trackId: string,
   format: LyricsFormatType = 'lrc',
-  apiBase: string = 'https://syrics-api.vercel.app'
+  apiBase: string = DEFAULT_LYRICS_API_BASE
 ): Promise<LyricsResponse> => {
   const url = `${apiBase}/?trackid=${trackId}&format=${format}`;
 
   const response = await fetch(url);
   
   if (response.status === 429) {
-    const waitTime = 30;
     throw new LyricsApiError(
-      `Rate limited. Please wait ${waitTime} seconds.`,
+      `Rate limited. Please wait ${RATE_LIMIT_WAIT_TIME_SECONDS} seconds.`,
       429,
       true,
       false
