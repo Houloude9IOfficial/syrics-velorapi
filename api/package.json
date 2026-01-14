@@ -1,0 +1,39 @@
+{
+  "name": "syrics-api",
+  "version": "1.0.0",
+  "description": "Node.js API for fetching Spotify lyrics and track information",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "spotify",
+    "lyrics",
+    "synced-lyrics",
+    "lrc",
+    "music",
+    "api",
+    "nodejs"
+  ],
+  "author": "Akash R. Chandran",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akashrchandran/syrics-web-react.git",
+    "directory": "api"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}
